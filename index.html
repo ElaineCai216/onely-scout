@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Onely Scout — public-profile sourcing and outreach operations prototype" />
+    <title>Onely Scout · 3-day operator sprint</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><span class="brand-mark">O</span><span>Onely <b>Scout</b></span></div>
+        <div class="sprint-chip"><span class="pulse"></span> Sprint live · Day 1</div>
+        <nav id="nav" aria-label="主导航">
+          <button class="nav-item active" data-view="overview"><span>◫</span>总览</button>
+          <button class="nav-item" data-view="discovery"><span>⌕</span>目标发现</button>
+          <button class="nav-item" data-view="candidates"><span>◎</span>候选池 <em id="navCount">120</em></button>
+          <button class="nav-item" data-view="outreach"><span>✦</span>AI 触达草稿</button>
+          <button class="nav-item" data-view="pipeline"><span>⇢</span>跟进漏斗</button>
+          <button class="nav-item" data-view="compliance"><span>⌁</span>合规与审计</button>
+        </nav>
+        <div class="sidebar-foot">
+          <div class="safety-dot"></div>
+          <div><strong>安全演示模式</strong><small>外发能力已锁定</small></div>
+        </div>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div><p class="eyebrow">US SOCIAL OPS · OCT 30–NOV 1</p><h1 id="pageTitle">增长作战总览</h1></div>
+          <div class="top-actions"><button class="ghost" id="openImport">导入候选人</button><button class="primary" data-jump="discovery">＋ 启动发现任务</button></div>
+        </header>
+
+        <section class="view active" id="view-overview">
+          <div class="alert safety"><span>✓</span><div><strong>演示环境：0 条消息真实发送</strong><p>所有候选人均来自公开主页；触达只生成草稿，必须经人工审批。</p></div><button data-jump="compliance">查看边界</button></div>
+          <div class="metrics" id="metrics"></div>
+          <div class="grid overview-grid">
+            <article class="panel funnel-panel">
+              <div class="panel-head"><div><p class="eyebrow">3-DAY NORTH STAR</p><h2>从发现到 100 人入驻</h2></div><span class="tag violet">目标 100</span></div>
+              <div class="funnel" id="funnel"></div>
+              <div class="funnel-note"><span>AI 自动化覆盖 <b>72%</b> 重复工作</span><span>预计节省 <b>41.5h</b></span></div>
+            </article>
+            <article class="panel plan-panel">
+              <div class="panel-head"><div><p class="eyebrow">EXECUTION CLOCK</p><h2>72 小时冲刺</h2></div></div>
+              <div class="timeline">
+                <div class="day active"><div class="day-num">01</div><div><strong>发现 + 校验</strong><p>12 组检索式 · 公开来源 · 评分去重</p><small>今天 09:00–23:00</small></div></div>
+                <div class="day"><div class="day-num">02</div><div><strong>人工审批 + 分层触达</strong><p>P0 个性化 · P1 模板变量 · 绝不群发</p><small>目标：500 份已审批草稿</small></div></div>
+                <div class="day"><div class="day-num">03</div><div><strong>跟进 + 快速入驻</strong><p>FAQ、资格确认、15 分钟 onboarding</p><small>目标：100 人完成入驻</small></div></div>
+              </div>
+            </article>
+          </div>
+          <div class="grid lower-grid">
+            <article class="panel"><div class="panel-head"><div><p class="eyebrow">PRIORITY QUEUE</p><h2>现在先看这 5 人</h2></div><button class="link-btn" data-jump="candidates">查看全部 →</button></div><div id="priorityList" class="priority-list"></div></article>
+            <article class="panel"><div class="panel-head"><div><p class="eyebrow">SOURCE HEALTH</p><h2>来源质量</h2></div></div><div class="source-bars" id="sourceBars"></div></article>
+          </div>
+        </section>
+
+        <section class="view" id="view-discovery">
+          <div class="discovery-layout">
+            <article class="panel brief-card">
+              <div class="panel-head"><div><p class="eyebrow">ICP → SEARCH GRAPH</p><h2>从目标画像自动生成发现任务</h2></div><span class="tag green">公开信息 Only</span></div>
+              <div class="form-grid">
+                <label>市场<select id="market"><option>United States</option></select></label>
+                <label>目标角色<input id="roles" value="Social Media Manager, Community Manager" /></label>
+                <label class="full">平台能力<div class="chip-input"><span>TikTok ×</span><span>Instagram ×</span><span>YouTube Shorts ×</span></div></label>
+                <label class="full">强信号<div class="chip-input"><span>Creator / Influencer</span><span>Community</span><span>Growth metrics</span><span>Freelance</span></div></label>
+              </div>
+              <button class="primary wide" id="runDiscovery">运行公开信息发现</button>
+              <p class="microcopy">演示使用已验证快照；仓库脚本可重新执行实时公开搜索。不会登录、绕过访问控制或抓取非公开字段。</p>
+            </article>
+            <article class="panel pipeline-card">
+              <div class="panel-head"><div><p class="eyebrow">LIVE PIPELINE</p><h2>采集链路</h2></div><span id="runStatus" class="status idle">待运行</span></div>
+              <div class="steps" id="steps">
+                <div class="step" data-step="0"><span>1</span><div><strong>生成检索图谱</strong><p>角色 × 平台 × 地域 × 来源</p></div><em>12 queries</em></div>
+                <div class="step" data-step="1"><span>2</span><div><strong>读取公开结果</strong><p>LinkedIn / Twine / Contra</p></div><em>227 raw</em></div>
+                <div class="step" data-step="2"><span>3</span><div><strong>标准化与去重</strong><p>Canonical URL + 姓名/地区</p></div><em>9 merged</em></div>
+                <div class="step" data-step="3"><span>4</span><div><strong>证据评分</strong><p>六维规则 + 可解释理由</p></div><em>120 kept</em></div>
+                <div class="step" data-step="4"><span>5</span><div><strong>进入人工复核队列</strong><p>P0 / P1 / P2 分级</p></div><em>0 sent</em></div>
+              </div>
+            </article>
+          </div>
+          <article class="panel query-panel"><div class="panel-head"><div><p class="eyebrow">QUERY PREVIEW</p><h2>可审计检索式</h2></div><span class="tag">无需候选人名单</span></div><div class="query-list"><code>site:linkedin.com/in "social media manager" "United States" TikTok Instagram</code><code>site:twine.net "social media manager" "United States" TikTok creator</code><code>site:contra.com social media strategist short-form video United States</code></div></article>
+        </section>
+
+        <section class="view" id="view-candidates">
+          <div class="candidate-toolbar panel">
+            <div class="searchbox">⌕ <input id="candidateSearch" placeholder="搜索姓名、证据或平台…" /></div>
+            <div class="filters"><button class="filter active" data-grade="all">全部</button><button class="filter" data-grade="A">A 级</button><button class="filter" data-grade="B">B 级</button><button class="filter" data-grade="C">C 级</button></div>
+            <button class="ghost" id="exportCsv">导出 CSV</button>
+          </div>
+          <article class="panel table-panel">
+            <div class="table-meta"><span id="resultCount">120 名候选人</span><span>公开快照 · 2026-10-30 · <b>0 条已发送</b></span></div>
+            <div class="table-wrap"><table><thead><tr><th>候选人</th><th>公开来源</th><th>匹配证据</th><th>评分</th><th>优先级</th><th>状态</th></tr></thead><tbody id="candidateRows"></tbody></table></div>
+            <div class="pagination"><button id="prevPage">←</button><span id="pageInfo">1 / 10</span><button id="nextPage">→</button></div>
+          </article>
+        </section>
+
+        <section class="view" id="view-outreach">
+          <div class="alert safety"><span>🔒</span><div><strong>发送能力已硬锁定</strong><p>本页只生成和编辑草稿；不调用邮件、LinkedIn 或社媒发送接口。</p></div></div>
+          <div class="outreach-layout">
+            <article class="panel select-panel"><div class="panel-head"><div><p class="eyebrow">P0 QUEUE</p><h2>选择候选人</h2></div></div><div id="outreachPeople"></div></article>
+            <article class="panel composer"><div class="composer-top"><div><p class="eyebrow">PERSONALIZED DRAFT</p><h2 id="draftName">选择一位候选人</h2></div><span class="tag violet">AI 草稿</span></div><div class="draft-evidence" id="draftEvidence">从公开证据中选择 1–2 个具体信号，避免“看起来像群发”。</div><textarea id="draftText" aria-label="触达草稿"></textarea><div class="composer-actions"><button class="ghost" id="regenerate">↻ 换一个版本</button><button class="locked" disabled>🔒 发送（笔试禁用）</button></div><div class="human-check"><strong>人工审批清单</strong><label><input type="checkbox" /> 公开事实已逐条复核</label><label><input type="checkbox" /> 未使用敏感或非公开信息</label><label><input type="checkbox" /> 提供退出方式且不过度承诺</label></div></article>
+          </div>
+        </section>
+
+        <section class="view" id="view-pipeline">
+          <div class="metrics compact" id="pipelineMetrics"></div>
+          <div class="kanban" id="kanban"></div>
+          <article class="panel economics"><div><p class="eyebrow">OPS ECONOMICS</p><h2>自动化如何把 53 小时压到 11.5 小时</h2></div><div class="savings"><div><span>搜索与摘录</span><b>24h → 3h</b></div><div><span>去重与初筛</span><b>12h → 1.5h</b></div><div><span>文案初稿</span><b>10h → 2h</b></div><div><span>人工复核与回复</span><b>7h → 5h</b></div></div></article>
+        </section>
+
+        <section class="view" id="view-compliance">
+          <div class="compliance-grid">
+            <article class="panel"><p class="eyebrow">ALLOWED</p><h2>只做这些</h2><ul class="rule-list yes"><li>搜索引擎已索引的公开职业主页</li><li>候选人主动公开的作品集与商务入口</li><li>保存来源 URL、抓取时间和命中证据</li><li>人工审批后再决定是否单独联系</li><li>按请求删除与设置不再联系</li></ul></article>
+            <article class="panel"><p class="eyebrow">PROHIBITED</p><h2>坚决不做</h2><ul class="rule-list no"><li>登录绕过、反爬规避或购买数据</li><li>猜测私人邮箱或合并非公开身份信息</li><li>批量自动发送、自动加好友或轰炸跟进</li><li>依据敏感属性筛选或推断心理状态</li><li>把 AI 评分当作最终录用决定</li></ul></article>
+          </div>
+          <article class="panel audit-panel"><div class="panel-head"><div><p class="eyebrow">AUDIT LOG</p><h2>操作可追溯</h2></div><button class="ghost" id="downloadLog">下载日志</button></div><div class="audit-table" id="auditLog"></div></article>
+        </section>
+      </main>
+    </div>
+
+    <div class="drawer" id="candidateDrawer" aria-hidden="true"><div class="drawer-shade" data-close></div><aside><button class="drawer-close" data-close>×</button><div id="drawerContent"></div></aside></div>
+    <dialog id="importDialog"><form method="dialog"><div class="modal-head"><div><p class="eyebrow">CSV / PASTE IMPORT</p><h2>导入并自动去重</h2></div><button value="cancel" aria-label="关闭">×</button></div><p>每行格式：姓名, 公开主页 URL, 地区。只保留公开职业信息。</p><textarea id="importText">Alex Lee, https://linkedin.com/in/alex-lee, New York\nAlex Lee, https://www.linkedin.com/in/alex-lee/?trk=copy, New York</textarea><div id="importResult" class="import-result"></div><menu><button value="cancel" class="ghost">取消</button><button type="button" class="primary" id="processImport">校验并导入</button></menu></form></dialog>
+    <div class="toast" id="toast"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
