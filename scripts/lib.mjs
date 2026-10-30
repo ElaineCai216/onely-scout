@@ -116,3 +116,11 @@ export function buildQueries(profile = {}) {
     `site:contra.com ${role} ${platforms} ${market}`
   ]);
 }
+
+export function isCandidateProfileUrl(value = "") {
+  const url = normalizeUrl(value);
+  if (/linkedin\.com\/in\/[^/]+$/i.test(url)) return true;
+  if (/twine\.net\/(?!projects\/|find\/)[^/]+$/i.test(url)) return true;
+  if (/contra\.com\/(?:p\/|[^/]+\/about|[^/]+)$/i.test(url)) return true;
+  return false;
+}

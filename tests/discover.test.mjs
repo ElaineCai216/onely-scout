@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildQueries, dedupeCandidates, normalizeUrl, scoreCandidate } from "../scripts/lib.mjs";
+import { buildQueries, dedupeCandidates, isCandidateProfileUrl, normalizeUrl, scoreCandidate } from "../scripts/lib.mjs";
 
 test("normalizes tracking-free profile URLs", () => {
   assert.equal(normalizeUrl("https://www.linkedin.com/in/example/?trk=abc#top"), "https://linkedin.com/in/example");
@@ -27,4 +27,11 @@ test("builds source-specific discovery queries from target profile", () => {
   const queries = buildQueries({ market: "United States", platforms: ["TikTok"], roles: ["community manager"] });
   assert.equal(queries.length, 3);
   assert.ok(queries.every((query) => query.includes("community manager")));
+});
+
+test("keeps person profiles and rejects job/result pages", () => {
+  assert.equal(isCandidateProfileUrl("https://www.linkedin.com/in/example/"), true);
+  assert.equal(isCandidateProfileUrl("https://www.twine.net/KortneeMairi"), true);
+  assert.equal(isCandidateProfileUrl("https://www.twine.net/projects/social-media-job"), false);
+  assert.equal(isCandidateProfileUrl("https://www.twine.net/find/social-media-managers/us"), false);
 });

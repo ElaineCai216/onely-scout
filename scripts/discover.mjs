@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { buildQueries, dedupeCandidates, makeCandidate } from "./lib.mjs";
+import { buildQueries, dedupeCandidates, isCandidateProfileUrl, makeCandidate } from "./lib.mjs";
 
 const options = Object.fromEntries(process.argv.slice(2).reduce((pairs, value, index, all) => {
   if (value.startsWith("--")) pairs.push([value.slice(2), all[index + 1] ?? true]);
@@ -29,7 +29,7 @@ for (const query of queries) {
   let count = 0;
   while ((match = resultPattern.exec(html)) && count < maxPerQuery) {
     const resolved = decodeDuckUrl(match[1]);
-    if (!/linkedin\.com\/in\/|twine\.net\/|contra\.com\//.test(resolved)) continue;
+    if (!isCandidateProfileUrl(resolved)) continue;
     records.push({
       name: stripTags(match[2]),
       profileUrl: resolved,
