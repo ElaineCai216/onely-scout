@@ -17,24 +17,17 @@ const profile = {
 const queries = buildQueries(profile);
 const records = [];
 for (const query of queries) {
-  const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
-  const response = await fetch(searchUrl, { headers: { "user-agent": "OnelyScoutResearch/1.0 (+evaluation-only)" } });
-  if (!response.ok) {
-    console.error(`Search skipped (${response.status}): ${query}`);
-    continue;
-  }
-  const html = await response.text();
-  const resultPattern = /result__a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]*?result__snippet[^>]*>([\s\S]*?)<\/a>/g;
-  let match;
+  const results = await searchPublicWeb(query);
   let count = 0;
-  while ((match = resultPattern.exec(html)) && count < maxPerQuery) {
-    const resolved = decodeDuckUrl(match[1]);
+  for (const result of results) {
+    if (count >= maxPerQuery) break;
+    const resolved = decodeDuckUrl(result.url);
     if (!isCandidateProfileUrl(resolved)) continue;
     records.push({
-      name: stripTags(match[2]),
+      name: stripTags(result.title),
       profileUrl: resolved,
       source: resolved.includes("linkedin.com") ? "LinkedIn public profile" : resolved.includes("twine.net") ? "Twine public portfolio" : "Contra public portfolio",
-      snippet: stripTags(match[3])
+      snippet: stripTags(result.snippet)
     });
     count += 1;
   }
@@ -60,4 +53,38 @@ function decodeDuckUrl(value) {
   } catch {
     return value;
   }
+}
+
+async function searchPublicWeb(query) {
+  const headers = { "user-agent": "OnelyScoutResearch/1.0 (+evaluation-only)" };
+  const results = [];
+  try {
+    const rssUrl = `https://www.bing.com/search?format=rss&q=${encodeURIComponent(query)}`;
+    const response = await fetch(rssUrl, { headers });
+    if (response.ok) {
+      const xml = await response.text();
+      const pattern = /<item>[\s\S]*?<title>([\s\S]*?)<\/title>[\s\S]*?<link>([\s\S]*?)<\/link>[\s\S]*?<description>([\s\S]*?)<\/description>[\s\S]*?<\/item>/g;
+      let match;
+      while ((match = pattern.exec(xml))) results.push({ title: decodeEntities(match[1]), url: decodeEntities(match[2]), snippet: decodeEntities(match[3]) });
+    }
+  } catch (error) {
+    console.error(`Bing RSS fallback: ${error.message}`);
+  }
+  if (results.some((item) => isCandidateProfileUrl(item.url))) return results;
+  try {
+    const duckUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
+    const response = await fetch(duckUrl, { headers });
+    if (!response.ok) return results;
+    const html = await response.text();
+    const pattern = /result__a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]*?result__snippet[^>]*>([\s\S]*?)<\/a>/g;
+    let match;
+    while ((match = pattern.exec(html))) results.push({ url: match[1], title: match[2], snippet: match[3] });
+  } catch (error) {
+    console.error(`DuckDuckGo fallback: ${error.message}`);
+  }
+  return results;
+}
+
+function decodeEntities(value) {
+  return value.replace(/<!\[CDATA\[|\]\]>/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
 }
