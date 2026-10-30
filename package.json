@@ -1,0 +1,12 @@
+{
+  "name": "onely-scout",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 4173 -d dist",
+    "test": "node --test tests/*.test.mjs",
+    "discover": "node scripts/discover.mjs",
+    "build:fixture": "node scripts/build-fixture.mjs --input /tmp --output dist/data/candidates.json --limit 120"
+  }
+}
